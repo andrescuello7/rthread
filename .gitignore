@@ -1,0 +1,5 @@
+/samples/express/node_modules
+/samples/express/package-lock.json
+/samples/fastapi/__pycache__
+/samples/fastapi/venv
+rthread
