@@ -1,4 +1,5 @@
 #include "for_uvicorn.h"
+#include "logger.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -51,6 +52,7 @@ void *run_process(void *arg){
         perror("Error in execlp");
         exit(EXIT_FAILURE);
     } else {
+        logger(pid);
         printf("\033[01;32m[+]\033[0m Process run on PORT [%s] PID [\033[01;33m%d\033[0m]\n", process->port, pid);
     }
 
