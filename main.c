@@ -7,7 +7,6 @@
 #include <time.h>
 #include <unistd.h>
 
-
 #define SIZE 100
 char *PATH;
 char *PORT;
@@ -24,7 +23,6 @@ typedef struct {
 // Thread function that forks a child process and executes the target process
 void *run_process(void *arg){
     ThreadStruct *process = (ThreadStruct*)arg;
-    printf("[%d] Run %s %s\n", process->id, process->manager, process->path);
     
     pid_t pid = fork();
 
@@ -45,20 +43,20 @@ void *run_process(void *arg){
 
             process->path = new_path_uvi;
             execlp("uvicorn", "uvicorn", "--port", process->port, process->path, (char *)NULL);
-
         } 
         if (strcmp(process->manager, "node") == 0) {
             setenv("PORT", process->port, 1);
             execlp("node", "node", process->path, (char *)NULL);
         }
-
         perror("Error in execlp");
         exit(EXIT_FAILURE);
+    } else {
+        printf("\033[01;32m[+]\033[0m Process run on PORT [%s] PID [\033[01;33m%d\033[0m]\n", process->port, pid);
     }
 
-    // Wait for the child process to finish
-    int status;
-    waitpid(pid, &status, 0);
+    // TODO: Wait for the child process to finish
+    // int status;
+    // waitpid(pid, &status, 0);
     pthread_exit(NULL);
 }
 
