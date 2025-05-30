@@ -1,15 +1,17 @@
+#include "for_uvicorn.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dirent.h>
 #include <pthread.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <errno.h>
 #include <time.h>
 #include <unistd.h>
 
+
+#define SIZE 100
+char *PATH;
+char *PORT;
+char *MANAGER;
 
 // Struct to store process information for each thread
 typedef struct {
@@ -18,27 +20,6 @@ typedef struct {
     char *path;
     char *manager;
 } ThreadStruct;
-
-#define SIZE 100
-char *PATH;
-char *PORT;
-char *MANAGER;
-
-// Converts a file path like "samples/fastapi/app.py" to module path "samples.fastapi.app"
-void for_uvicorn_path(const char *path, char *result) {
-    strcpy(result, path);
-    int len = strlen(result);
-    for (int i = 0; i < len; i++) {
-        if (result[i] == '/') {
-            result[i] = '.';
-        }
-    }
-
-    char *last_dot = strrchr(result, '.');
-    if (last_dot != NULL) {
-        *last_dot = '\0';
-    }
-}
 
 // Thread function that forks a child process and executes the target process
 void *run_process(void *arg){
@@ -63,10 +44,14 @@ void *run_process(void *arg){
             sprintf(new_path_uvi, "%s:app", formatted);
 
             process->path = new_path_uvi;
+            execlp("uvicorn", "uvicorn", "--port", process->port, process->path, (char *)NULL);
+
+        } 
+        if (strcmp(process->manager, "node") == 0) {
+            setenv("PORT", process->port, 1);
+            execlp("node", "node", process->path, (char *)NULL);
         }
 
-        // Replace current process with the specified manager command
-        execlp(process->manager, process->manager, process->path, (char *)NULL);
         perror("Error in execlp");
         exit(EXIT_FAILURE);
     }
@@ -76,7 +61,6 @@ void *run_process(void *arg){
     waitpid(pid, &status, 0);
     pthread_exit(NULL);
 }
-
 
 // Create and run multiple threads to launch concurrent processes
 void threads_exec(int num_threads){
@@ -96,7 +80,6 @@ void threads_exec(int num_threads){
         pthread_join(threads[i], NULL);
     }
 }
-
 
 int main(int argc, char **argv){
     if(argc != 7 || strcmp(argv[1], "-m") != 0 || strcmp(argv[3], "-r") != 0 || strcmp(argv[5], "-p") != 0){

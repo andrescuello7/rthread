@@ -19,19 +19,17 @@ gcc main.c -o rthread -lpthread
 ### Run
 
 ```bash
-./rthread -m [NPM|UVICORN] -r [ROOT(main.py)] -p [PORT]
+$ rthread -m [NPM|UVICORN] -r [ROOT(main.py)] -p [PORT]
 ```
 
 ### Example
 
 ```bash
-./rthread -m uvicorn -r samples/fastapi/app.py -p 8080
-```
+# Python
+$ rthread -m uvicorn -r samples/fastapi/app.py -p 8080
 
-This will run:
-
-```bash
-uvicorn samples.fastapi.app:app
+# Node
+$ rthread -m node -r samples/express/app.js -p 8080
 ```
 
 ## Structure
