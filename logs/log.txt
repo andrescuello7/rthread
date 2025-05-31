@@ -1,1 +1,1 @@
-[+] New process PID[6382]
+PID: 74861 | PROCESS: uvicorn | PATH: [samples/fastapi/app.py]

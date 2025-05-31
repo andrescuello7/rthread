@@ -3,13 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Converts a file path like "samples/fastapi/app.py" to module path "samples.fastapi.app"
-void logger(int pid) {
-    // printf("New log PID[%d]\n", pid);
-
+void logger(ProcesStruct process) {
     char *path = "logs/log.txt";
     char output[1024];
-    snprintf(output, sizeof(output), "[+] New process PID[%d]", pid);
+    snprintf(output, sizeof(output), "PID: %d | PROCESS: %s | PATH: %s", process.id, process.manager, process.path);
 
     FILE *file = fopen(path, "a");
     if (file == NULL) {

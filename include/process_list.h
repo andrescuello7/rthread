@@ -1,6 +1,6 @@
-#ifndef FOR_UVICORN_H
-#define FOR_UVICORN_H
+#ifndef PROCESS_LIST
+#define PROCESS_LIST
 
-void for_uvicorn_path(const char *path, char *result);
+void process_list();
 
 #endif
