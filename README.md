@@ -13,7 +13,7 @@
 ### Compile
 
 ```bash
-gcc main.c src/for_uvicorn.c -Iinclude -o rthread -lpthread
+gcc main.c src/for_uvicorn.c src/process_list.c src/logger.c -Iinclude -o rthread -lpthread
 ```
 
 ### Run
