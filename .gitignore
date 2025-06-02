@@ -3,3 +3,4 @@
 /samples/fastapi/__pycache__
 /samples/fastapi/venv
 rthread
+.vscode/
