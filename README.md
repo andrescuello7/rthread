@@ -2,6 +2,8 @@
 
 **rthread** is a simple multi-threaded C program that launches a given runtime (like `npm` or `uvicorn`) for a target application file using POSIX threads and process forking.
 
+https://github.com/user-attachments/assets/0581122b-f44a-44cc-840a-c8b635f626e2
+
 ## Features
 
 - Launches a subprocess using a thread per process.
@@ -9,6 +11,23 @@
 - Automatically converts Python file paths to ASGI module format for `uvicorn`.
 
 ## Usage
+## Download en Windows
+
+We don't version to Download to Windows (`.exe`):
+
+- gitchange.exe
+
+## Download en Linux
+
+```bash
+$ apt install rthread
+```
+
+## Download en MacOs
+
+```bash
+$ brew install rthread
+```
 
 ### Compile
 
