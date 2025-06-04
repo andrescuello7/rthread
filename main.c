@@ -1,6 +1,6 @@
 #include "for_uvicorn.h"
 #include "process_list.h"
-#include "logger.h"
+#include "logs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,15 +9,12 @@
 #include <time.h>
 #include <unistd.h>
 
-char *PATH;
-char *PORT;
-char *MANAGER;
+ProcesStruct process_data[1];
 
 // Thread function that forks a child process and executes the target process
 void *run_process(void *arg)
 {
     ProcesStruct *process = (ProcesStruct *)arg;
-
     pid_t pid = fork();
 
     if (pid < 0)
@@ -51,8 +48,9 @@ void *run_process(void *arg)
     else
     {
         process->id = pid;
-        logger(*process);
-        printf("\033[01;32m[+]\033[0m Process run on PORT [%s] PID [\033[01;33m%d\033[0m]\n", process->port, pid);
+        add_process(*process);
+        add_log(*process);
+        printf("\033[01;32m[+]\033[0m Process run on PORT [%s] PID [\033[01;33m%d\033[0m]\n\n", process->port, pid);
     }
 
     // TODO: Wait for the child process to finish
@@ -62,10 +60,13 @@ void *run_process(void *arg)
 }
 
 // Create and run multiple threads to launch concurrent processes
-void threads_exec(int num_threads)
+void create_model(
+    int num_threads, 
+    char *PATH,
+    char *PORT,
+    char *MANAGER)
 {
     pthread_t threads[num_threads];
-    ProcesStruct process_data[num_threads];
 
     for (int i = 0; i < num_threads; i++)
     {
@@ -81,32 +82,34 @@ void threads_exec(int num_threads)
     }
 }
 
-int main(int argc, char **argv)
-{
-    if (argc == 2 && strcmp(argv[1], "-l") == 0 || strcmp(argv[1], "--list") == 0)
+void val_args(int argc, char **argv){
+    if (argc == 2 && (strcmp(argv[1], "--logs") == 0))
     {
-        process_list();
+        get_logs();
     }
-    else if (argc == 3 && strcmp(argv[1], "-k") == 0 || strcmp(argv[1], "--kill") == 0)
+    else if (argc == 2 && (strcmp(argv[1], "--list") == 0))
     {
-        char *PID = argv[2];
-        execlp("kill", "kill", "-9", PID, (char *)NULL);
-    }
-    else if (argc == 7 && strcmp(argv[1], "-m") == 0 && strcmp(argv[3], "-r") == 0 && strcmp(argv[5], "-p") == 0)
-    {
-        // Read CLI arguments
-        MANAGER = argv[2];
-        PATH = argv[4];
-        PORT = argv[6];
-        int num_threads = 1;
-
-        // Start thread(s) to run the process(es)
-        threads_exec(num_threads);
-    }
-    else
-    {
-        printf("OPTIONS\n$ rthread -m [NPM|UVICORN] -r [ROOT(main.py)] -p [PORT]!\n$ rthread -k --kill [PID] \n$ rthread -l --list [List Process] \n");
+        list_processes();
         exit(0);
     }
+    else if (argc == 3 && (strcmp(argv[1], "-k") == 0 || strcmp(argv[1], "--kill") == 0))
+    {
+        char *PID = argv[2];
+        remove_process_by_pid(atoi(PID));
+        execlp("kill", "kill", "-9", PID, (char *)NULL);
+    }
+    else if (argc == 7 && (strcmp(argv[1], "-m") == 0 && strcmp(argv[3], "-r") == 0 && strcmp(argv[5], "-p") == 0))
+    {
+        // TODO: Number of THREADS in 1
+        create_model(1, argv[4], argv[6], argv[2]);
+    } else {
+        printf("\x1b[35mR-THREAD Run Programs _(^_^)_ \x1b[0m\n\n\x1b[35m$\x1b[0m rthread -m (node|uvicorn) -r (path) -p PORT\n\n\x1b[35m$\x1b[0m rthread -k --kill (PID) \n\x1b[35m$\x1b[0m rthread --logs \n\x1b[35m$\x1b[0m rthread --list \n");
+    }
+    exit(0);
+}
+
+int main(int argc, char **argv)
+{
+    val_args(argc, argv);
     return 0;
 }

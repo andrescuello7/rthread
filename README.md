@@ -13,7 +13,12 @@
 ### Compile
 
 ```bash
-gcc main.c src/for_uvicorn.c src/process_list.c src/logger.c -Iinclude -o rthread -lpthread
+gcc main.c src/for_uvicorn.c src/process_list.c src/logs.c -o rthread \
+  -Iinclude \
+  -I/opt/homebrew/Cellar/cjson/1.7.18/include \
+  -L/opt/homebrew/Cellar/cjson/1.7.18/lib \
+  -lcjson -lpthread
+
 ```
 
 ### Run
