@@ -29,7 +29,12 @@ $ apt install rthread
 $ brew install rthread
 ```
 
-### Compile
+## Compilation Make
+```bash
+make
+```
+
+### Complile with GCC
 
 ```bash
 gcc main.c src/for_uvicorn.c src/process_list.c src/logs.c -o rthread \
@@ -37,7 +42,6 @@ gcc main.c src/for_uvicorn.c src/process_list.c src/logs.c -o rthread \
   -I/opt/homebrew/Cellar/cjson/1.7.18/include \
   -L/opt/homebrew/Cellar/cjson/1.7.18/lib \
   -lcjson -lpthread
-
 ```
 
 ### Run
